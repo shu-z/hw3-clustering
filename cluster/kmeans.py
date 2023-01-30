@@ -21,6 +21,15 @@ class KMeans:
                 the maximum number of iterations before quitting model fit
         """
 
+        self.k=k
+        self.tol=tol
+        self.max_iter=max_iter
+
+
+    
+
+
+    
     def fit(self, mat: np.ndarray):
         """
         Fits the kmeans algorithm onto a provided 2D matrix.
@@ -37,7 +46,58 @@ class KMeans:
                 A 2D matrix where the rows are observations and columns are features
         """
 
+        k=self.k
+
+        centroids=self.cluster_center(k, m=mat.shape[1], lower=mat.min(), upper=mat.max())
+        
+         
+        #initialize values
+        sse=np.inf
+        i=0
+        
+        old_centroids=centroids
+        new_centroids=np.zeros_like(centroids)
+        #while sse > tol or i<100:
+        while i<self.max_iter:
+                   
+            #for each new set of centroids, then, calculate how far each row 
+            #print('centroids', centroids)
+            dist_from_cent=cdist(mat, old_centroids, 'euclidean')
+            #print('mat', mat)
+            #print('dist_From_cent', dist_from_cent)
+     
+            #get indices for which centroid closest to each row 
+            centroid_idx=(np.argmin(dist_from_cent, axis=1))
+            #print(centroid_idx)
+            #print('centroid_idx', centroid_idx)
+            
+            
+            #get new centroids for each cluster
+            for k_idx in range(0,k):
+                k_rows=np.where(centroid_idx==k_idx)
+                new_centroids[k_idx]=np.mean(mat[k_rows,:], axis=1)
+     
+                
+            #get sse
+            sse=np.square(np.sum((old_centroids-new_centroids)**2))
+            
+            if sse<self.tol:
+                #print('new', new_centroids)
+                self.final_centroids=new_centroids
+                self.final_sse=sse
+            
+            
+            else:
+                old_centroids=new_centroids
+                #print('centroids', centroids)
+                i+=1
+  
+
     def predict(self, mat: np.ndarray) -> np.ndarray:
+
+        dist_from_cent=cdist(mat, self.final_centroids, 'euclidean')
+
+        return(np.argmin(dist_from_cent, axis=1))
         """
         Predicts the cluster labels for a provided matrix of data points--
             question: what sorts of data inputs here would prevent the code from running?
@@ -63,6 +123,7 @@ class KMeans:
             float
                 the squared-mean error of the fit model
         """
+        return(self.final_sse)
 
     def get_centroids(self) -> np.ndarray:
         """
@@ -72,3 +133,18 @@ class KMeans:
             np.ndarray
                 a `k x m` 2D matrix representing the cluster centroids of the fit model
         """
+
+        return(self.final_centroids)
+
+
+    def cluster_center(k, m, lower, upper):   
+        """
+        Initializes random centroids for k clusters and m features 
+        """
+        rand_samp=(np.random.random_sample([k,m]))
+        #rescale random sample so that they are within bounds of all values of mat
+        rand_samp_scale=(upper-lower)*rand_samp + lower
+        return(rand_samp_scale)
+
+
+
