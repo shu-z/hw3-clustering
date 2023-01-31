@@ -26,7 +26,15 @@ class KMeans:
         self.max_iter=max_iter
 
 
+
     
+    #check that k is not 0
+
+
+    #check that k is less than total number of data points 
+
+
+    #set error if Nan exists for centroid
 
 
     
@@ -79,6 +87,7 @@ class KMeans:
      
                 
             #get sse
+            #this is wrong!!! need to calculate sse for clusters with old and new centroids and then take difference
             sse=np.square(np.sum((old_centroids-new_centroids)**2))
             
             if sse<self.tol:
