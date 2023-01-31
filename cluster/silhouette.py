@@ -37,24 +37,23 @@ class Silhouette:
             k_rows=mat[np.where(labels==k)]
             intra_dists=cdist(k_rows, mat[[i],:], 'euclidean')
             
-            #a is avg intra cluster variance 
+            #a is avg intra cluster dist 
             a=np.mean(intra_dists)
         
         
-            #b is intercluster variance
- 
-        
-        
+            
+            #list of average distance to every other cluster 
             inter_clust_dist=[]
             #write this better this is dumb
+            #loop through all other cluster 
             for not_k in (np.unique(labels[labels!=k])):
-                #print('not_k', not_k)
                 not_k_rows=mat[np.where(labels==not_k)]
+                #calculate dist between query pt and pts in this cluster 
                 inter_dists=cdist(not_k_rows, mat[[i],:], 'euclidean')
             
                 inter_clust_dist.append(np.mean(inter_dists))
             
-        
+            #b is avg intercluster dist for closest cluster 
             b=min(inter_clust_dist)          
         
             score_list.append((b-a)/max(b,a))

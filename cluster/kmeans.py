@@ -3,7 +3,7 @@ from scipy.spatial.distance import cdist
 
 
 class KMeans:
-    def __init__(self, k: int, tol: float = 1e-6, max_iter: int = 100):
+    def __init__(self, k: int, tol: float = 1e-6, max_iter: int = 100, cluster_init: str = 'kmeans++'):
         """
         In this method you should initialize whatever attributes will be required for the class.
 
@@ -24,6 +24,8 @@ class KMeans:
         self.k=k
         self.tol=tol
         self.max_iter=max_iter
+
+
 
 
 
@@ -146,6 +148,7 @@ class KMeans:
         return(self.final_centroids)
 
 
+
     def cluster_center(k, m, lower, upper):   
         """
         Initializes random centroids for k clusters and m features 
@@ -156,4 +159,40 @@ class KMeans:
         return(rand_samp_scale)
 
 
+
+
+    def kmeans_plus(k, mat):   
+        """
+        Initializes centroids for k clusters and m features with kmeans++
+        """
+    
+        centroids=[]
+    
+        #first, randomly select centroid for first pt 
+        x=np.random.choice(range(0,mat.shape[0]), 1)
+        centroids.append(mat[x])
+    
+    
+        #mat=np.delete(mat, x, axis=0)
+    
+    
+        #calculate distance between centroid and all other points
+    
+        for i in range(1, k):
+        
+            cent_list=[]
+            for cent in centroids:
+                dist_from_cent=cdist(mat, cent, 'euclidean')
+                cent_list.append(dist_from_cent)
+            
+        
+            sum_dist=np.sum(cent_list, axis=0)
+        
+            farthest_pt_idx=np.argmax(sum_dist, axis=0)
+        
+        
+            centroids.append(mat[farthest_pt_idx])
+        
+        
+        return(np.concatenate(centroids))
 

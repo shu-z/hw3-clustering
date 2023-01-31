@@ -17,4 +17,4 @@ dependencies = [
 ]
 
 [project.urls]
-Home = "https://github.com/shu-z/HW1-FAST-AQ-Parser"
+Home = "https://github.com/shu-z/hw3-clustering"
