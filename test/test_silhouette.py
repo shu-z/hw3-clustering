@@ -7,7 +7,7 @@ from sklearn.metrics import silhouette_score
 
 def test_silhouette():
     """
-    check that silhouette scores accurate 
+    check that silhouette scores accurate against sklearn
     """
 
 

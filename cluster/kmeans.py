@@ -21,6 +21,8 @@ class KMeans:
                 the maximum number of iterations before quitting model fit
         """
 
+
+        #check that at least one cluster
         if k==0:
             raise ValueError(f"k must be greater than 0")
 
@@ -51,6 +53,7 @@ class KMeans:
 
         k=self.k
 
+        #check that k less than number of observations
         if k>mat.shape[0]:
             raise ValueError(f"k is more than total number of points")
 
@@ -58,7 +61,8 @@ class KMeans:
             raise Exception(f"this method won't run on less than 2 dimensions (sorry)")
         
 
-
+        #select cluster initialization method
+        #the random one sucks
         if self.cluster_init=='kmeans++':
             centroids=self._kmeans_plus_init(k, mat)
         elif self.cluster_init=='random':
@@ -74,12 +78,13 @@ class KMeans:
         
         old_centroids=centroids
         new_centroids=np.zeros_like(centroids)
-        #while sse > tol or i<100:
+       
+       #continue to find new centroids until change in sse is small
         while i<self.max_iter:
                    
-            #for each new set of centroids, then, calculate how far each row 
+            #for each new set of centroids, calculate how far from each observation
             dist_from_cent=cdist(mat, old_centroids, 'euclidean')
-            #get indices for which centroid closest to each row 
+            #get indices for which centroid closest to each observation
             centroid_idx=(np.argmin(dist_from_cent, axis=1))
             
             #get new centroids for each cluster
@@ -93,13 +98,14 @@ class KMeans:
             new_centroid_idx=(np.argmin(dist_from_cent, axis=1))
 
 
-            #get distances of all points to closest centroids
+            #get sse for old and new centroids
             old_sse=np.sum((dist_from_cent[range(0, len(mat)),centroid_idx])**2)
             new_sse=np.sum((new_dist_from_cent[range(0, len(mat)),new_centroid_idx])**2)
-            
+        
             change_sse=abs(new_sse-old_sse)
             #change_sse=np.square(np.sum((old_centroids-new_centroids)**2))
             
+            #return when change in sse < tolerance
             if change_sse<self.tol:
                 self.final_centroids=new_centroids
                 self.final_sse=new_sse
@@ -134,7 +140,7 @@ class KMeans:
                 a 1D array with the cluster label for each of the observations in `mat`
         """
 
-        #get distance from each point to each centroid
+        #get distance from each observation to each centroid
         dist_from_cent=cdist(mat, self.final_centroids, 'euclidean')
         #return labels by closest distance  
         return(np.argmin(dist_from_cent, axis=1))
@@ -150,6 +156,7 @@ class KMeans:
             float
                 the squared-mean error of the fit model
         """
+
         if not hasattr(self, "final_sse"):
             raise AttributeError(f"No sse attribute. Try running fit")
 
@@ -163,6 +170,7 @@ class KMeans:
             np.ndarray
                 a `k x m` 2D matrix representing the cluster centroids of the fit model
         """
+        
         if not hasattr(self, "final_centroids"):
             raise AttributeError(f"No centroid attribute. Try running fit")
 

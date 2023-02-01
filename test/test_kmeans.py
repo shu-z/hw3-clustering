@@ -26,7 +26,7 @@ def test_k():
 
 def test_kmeans():
     """
-    test something
+    test kmeans fit working as expected
     
     """
 

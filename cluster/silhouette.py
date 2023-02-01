@@ -27,7 +27,7 @@ class Silhouette:
         """
 
 
-   
+        #make sure shape of input matrices are correct
         if mat.shape[0] != len(labels):
             raise Exception(f"Number of observations in matrix and labels are different")
 
@@ -41,7 +41,7 @@ class Silhouette:
         #get score for every observation in mat
         for i in range(0, len(mat)):
         
-            #get which k cluster it's in 
+            #get which k cluster i is in 
             k=labels[i]
         
             #get all points in cluster, remove point i
@@ -49,6 +49,7 @@ class Silhouette:
             query_pts= pts_in_cluster[pts_in_cluster!=i]
 
             k_rows=mat[query_pts]
+            #get intra cluster dist
             intra_dists=cdist(k_rows, mat[[i],:], 'euclidean')
             
             #a is avg intra cluster dist 
@@ -64,6 +65,7 @@ class Silhouette:
                 #calculate dist between query pt and pts in this cluster 
                 inter_dists=cdist(not_k_rows, mat[[i],:], 'euclidean')
             
+                #get inter cluster dists 
                 inter_clust_dist.append(np.mean(inter_dists))
             
             #b is avg intercluster dist for closest cluster 
