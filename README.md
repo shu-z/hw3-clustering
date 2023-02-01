@@ -71,21 +71,21 @@ scores = silhouette.score(labels)
 ## Tasks
 * Note: we will check that you can run your code on a medium-size dataset
 
-[ TODO ] Complete the KMeans class with your implementation of the algorithm
+[TODO] Complete the KMeans class with your implementation of the algorithm
 
   [x] complete the `fit` method  
   [x] complete the `predict` method  
   [x] complete the `get_error` method  
   [x] complete the `get_centroid` method  
 
-[ TODO ] Complete the Silhouette class with your implementation of the metric
+[TODO] Complete the Silhouette class with your implementation of the metric
   [x] complete the `score` method  
 
-[ TODO ] Unit Testing  
+[TODO] Unit Testing  
   [x] KMeans Class  
   [x] Silhouette Class -- make sure to test against sklearn
 
-[ TODO ] Packaging  
+[TODO] Packaging  
   [x] pip installable module  
   [x] github actions (install + pytest)  
 
