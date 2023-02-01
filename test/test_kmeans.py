@@ -1,4 +1,5 @@
 import pytest
+import numpy as np
 from cluster import KMeans, make_clusters
 from sklearn.cluster import KMeans as sklearn_kmeans
 
