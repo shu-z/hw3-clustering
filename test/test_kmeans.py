@@ -1,33 +1,19 @@
 import pytest
-from cluster import KMeans
-from cluster import make_clusters
+from cluster import KMeans, make_clusters
+from sklearn.cluster import KMeans as sklearn_kmeans
 
-
-# Write your k-means unit tests here
-
-
-# def make_clusters(
-#         n: int = 500, 
-#         m: int = 2, 
-#         k: int = 3, 
-#         bounds: tuple = (-10, 10),
-#         scale: float = 1,
-#         seed: int = 42) -> (np.ndarray, np.ndarray):
-#     """
-
-
-
-kmeans_obj=KMeans(k=4)
-large_kmeans_obj=KMeans(k=20)
 
 def test_k():
     """
-    test that kmeans canbe run with values of k given
+    test that kmeans can handle wrong values of k
+
     """
    
+   #check that k must be smaller than n
+    large_km=KMeans(k=20)
     mat_small_n=make_clusters(n=10, k=2)
     with pytest.raises(ValueError):
-        large_kmeans_obj.fit(mat_small_n[0])
+        large_km.fit(mat_small_n[0])
 
 
     #check that k=0 is not allowed
@@ -42,18 +28,18 @@ def test_kmeans():
     test something
     
     """
-    cluster1=make_clusters(n=1000, k=2)    
 
-    #check that all cluster labels are found in expected labels
-    #assert k=1, ""
+    #make some clusters
+    clusters=make_clusters(n=1000, k=5)    
 
+    #fit with kmeans
+    km = KMeans(k=5)
+    km.fit(clusters[0])
+    pred = km.predict(clusters[0])
 
+    
+    assert len(np.unique(pred))==5, "Fewer clusters output than expected"
 
+    assert all(pred) in range(0,5), "Not all cluster labels found in expected labels"
 
-    #check that cluster labels are similar as when run by sklearn 
-
-
-    #check that centroids are as similar as when run by sklearn
-
-
-    pass 
+    assert len(pred) == clusters[0].shape[0], "Length of predictions different than number of observations"

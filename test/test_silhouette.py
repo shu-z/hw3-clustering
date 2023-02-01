@@ -5,9 +5,6 @@ from sklearn.metrics import silhouette_score
 
 
 
-
-
-
 def test_silhouette():
     """
     check that silhouette scores accurate 
@@ -17,8 +14,7 @@ def test_silhouette():
     #make a set of clusters
     clusters=make_clusters(n=500, m=12, k=4)
 
-    #fit to kmeans, and predict
-
+    #fit with kmeans, and predict
     km = KMeans(k=4)
     km.fit(clusters[0])
     pred = km.predict(clusters[0])
@@ -26,7 +22,6 @@ def test_silhouette():
     #get sillouette scores
     scores = Silhouette().score(clusters[0], pred)
 
- 
     #assert that score values are between 0 and 1
     assert all( (x >= -1 and x<=1) for x in scores), "Silhouette scores outside of range from -1 to 1"
 

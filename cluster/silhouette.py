@@ -26,17 +26,25 @@ class Silhouette:
                 a 1D array with the silhouette scores for each of the observations in `X`
         """
 
-        
 
-    
+   
+        if mat.shape[0] != len(labels):
+            raise Exception(f"Number of observations in matrix and labels are different")
+
+        if mat.shape[0]<1:
+            raise Exception(f"Matrix must have at least one observation")
+
+
+
+        
         score_list=[]
+        #get score for every observation in mat
         for i in range(0, len(mat)):
         
-        
-            #get which k it's in 
+            #get which k cluster it's in 
             k=labels[i]
         
-            #get all  points in cluster, remove point i
+            #get all points in cluster, remove point i
             pts_in_cluster=np.array(np.where(labels==k))
             query_pts= pts_in_cluster[pts_in_cluster!=i]
 
@@ -47,7 +55,6 @@ class Silhouette:
             a=np.mean(intra_dists)
         
         
-            
             #list of average distance to every other cluster 
             inter_clust_dist=[]
             #write this better this is dumb
