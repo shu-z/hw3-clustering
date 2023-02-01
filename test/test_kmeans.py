@@ -45,7 +45,7 @@ def test_kmeans():
     cluster1=make_clusters(n=1000, k=2)    
 
     #check that all cluster labels are found in expected labels
-    assert k=1, ""
+    #assert k=1, ""
 
 
 

@@ -1,34 +1,38 @@
 import pytest
+import numpy as np
 from cluster import KMeans, Silhouette, make_clusters
+from sklearn.metrics import silhouette_score
 
 
-#CAN INITIALIZE clusters with k=5 for example
 
 
-#then check to see that highest silhouette score when k=5
-
-def test_edgecase():
-    pass
-
-  
 
 
-def test_optimal_k():
+def test_silhouette():
     """
-    check that highest silhouette score is for optimal k
+    check that silhouette scores accurate 
     """
 
 
-    #make a set of clusters with k=5
-    cluster_k5=make_clusters(n=500, m=12, k=5)
+    #make a set of clusters
+    clusters=make_clusters(n=500, m=12, k=4)
 
-    #fit to kmeans
+    #fit to kmeans, and predict
 
-    #predict
-
+    km = KMeans(k=4)
+    km.fit(clusters[0])
+    pred = km.predict(clusters[0])
 
     #get sillouette scores
+    scores = Silhouette().score(clusters[0], pred)
 
-
+ 
     #assert that score values are between 0 and 1
-    pass
+    assert all( (x >= -1 and x<=1) for x in scores), "Silhouette scores outside of range from -1 to 1"
+
+
+    #get silhouette scores from sklearn
+    sklearn_scores=silhouette_score(clusters[0], pred, random_state=42)
+    #assert that scores match up
+    assert np.isclose(np.mean(scores), sklearn_scores), "These silhouette scores differ from sklearn scores"
+    

@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.spatial.distance import cdist
+from sklearn.metrics import silhouette_score
 
 
 class Silhouette:
@@ -25,6 +26,8 @@ class Silhouette:
                 a 1D array with the silhouette scores for each of the observations in `X`
         """
 
+        
+
     
         score_list=[]
         for i in range(0, len(mat)):
@@ -33,8 +36,11 @@ class Silhouette:
             #get which k it's in 
             k=labels[i]
         
-            #get all other points in cluster
-            k_rows=mat[np.where(labels==k)]
+            #get all  points in cluster, remove point i
+            pts_in_cluster=np.array(np.where(labels==k))
+            query_pts= pts_in_cluster[pts_in_cluster!=i]
+
+            k_rows=mat[query_pts]
             intra_dists=cdist(k_rows, mat[[i],:], 'euclidean')
             
             #a is avg intra cluster dist 
