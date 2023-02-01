@@ -21,23 +21,16 @@ class KMeans:
                 the maximum number of iterations before quitting model fit
         """
 
+        if k==0:
+            raise ValueError(f"k must be greater than 0")
+
+
         self.k=k
         self.tol=tol
         self.max_iter=max_iter
+        self.cluster_init=cluster_init
 
-
-
-
-
-    
-    #check that k is not 0
-
-
-    #check that k is less than total number of data points 
-
-
-    #set error if Nan exists for centroid
-
+   
 
     
     def fit(self, mat: np.ndarray):
@@ -58,8 +51,22 @@ class KMeans:
 
         k=self.k
 
-        centroids=self.cluster_center(k, m=mat.shape[1], lower=mat.min(), upper=mat.max())
+        if k>mat.shape[0]:
+            raise ValueError(f"k is more than total number of points")
+
+        if mat.shape[1]<2:
+            raise Exception(f"this method won't run on less than 2 dimensions (sorry)")
         
+
+
+        if self.cluster_init=='kmeans++':
+            centroids=self._kmeans_plus(k, mat)
+        elif self.cluster_init=='random':
+            centroids=self._cluster_center(k, m=mat.shape[1], lower=mat.min(), upper=mat.max())
+        else:
+            raise Exception(f"Nonexistent cluster initialization method chosen")
+        
+
          
         #initialize values
         sse=np.inf
@@ -93,9 +100,11 @@ class KMeans:
             sse=np.square(np.sum((old_centroids-new_centroids)**2))
             
             if sse<self.tol:
+                print('hi')
                 #print('new', new_centroids)
                 self.final_centroids=new_centroids
                 self.final_sse=sse
+                return()
             
             
             else:
@@ -105,10 +114,6 @@ class KMeans:
   
 
     def predict(self, mat: np.ndarray) -> np.ndarray:
-
-        dist_from_cent=cdist(mat, self.final_centroids, 'euclidean')
-
-        return(np.argmin(dist_from_cent, axis=1))
         """
         Predicts the cluster labels for a provided matrix of data points--
             question: what sorts of data inputs here would prevent the code from running?
@@ -124,6 +129,13 @@ class KMeans:
             np.ndarray
                 a 1D array with the cluster label for each of the observations in `mat`
         """
+
+        #get distance from each point to each centroid
+        dist_from_cent=cdist(mat, self.final_centroids, 'euclidean')
+        #return labels by closest distance  
+        return(np.argmin(dist_from_cent, axis=1))
+
+
 
     def get_error(self) -> float:
         """
@@ -149,19 +161,21 @@ class KMeans:
 
 
 
-    def cluster_center(k, m, lower, upper):   
+    def _cluster_center(self, k, m, lower, upper):   
         """
         Initializes random centroids for k clusters and m features 
         """
+        
         rand_samp=(np.random.random_sample([k,m]))
-        #rescale random sample so that they are within bounds of all values of mat
+        #rescale centroids to be within range of mat values
         rand_samp_scale=(upper-lower)*rand_samp + lower
+
         return(rand_samp_scale)
 
 
 
 
-    def kmeans_plus(k, mat):   
+    def _kmeans_plus(self, k, mat):   
         """
         Initializes centroids for k clusters and m features with kmeans++
         """
@@ -171,26 +185,22 @@ class KMeans:
         #first, randomly select centroid for first pt 
         x=np.random.choice(range(0,mat.shape[0]), 1)
         centroids.append(mat[x])
-    
-    
         #mat=np.delete(mat, x, axis=0)
     
-    
-        #calculate distance between centroid and all other points
-    
+        #find remaining centroids given k
         for i in range(1, k):
-        
             cent_list=[]
+            #calculate distance between centroids and all other points
             for cent in centroids:
                 dist_from_cent=cdist(mat, cent, 'euclidean')
                 cent_list.append(dist_from_cent)
             
-        
+            
+            #find point farthest away from all current centroids
             sum_dist=np.sum(cent_list, axis=0)
-        
             farthest_pt_idx=np.argmax(sum_dist, axis=0)
         
-        
+            #make this point a centroid
             centroids.append(mat[farthest_pt_idx])
         
         
