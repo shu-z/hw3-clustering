@@ -17,6 +17,7 @@ from cluster import make_clusters
 
 
 
+kmeans_obj=KMeans(k=4)
 large_kmeans_obj=KMeans(k=20)
 
 def test_k():
@@ -41,8 +42,18 @@ def test_kmeans():
     test something
     
     """
+    cluster1=make_clusters(n=1000, k=2)    
+
+    #check that all cluster labels are found in expected labels
+    assert k=1, ""
 
 
+
+
+    #check that cluster labels are similar as when run by sklearn 
+
+
+    #check that centroids are as similar as when run by sklearn
 
 
     pass 
